@@ -1,0 +1,52 @@
+# To install or update the pre-commit withe latest version
+#
+# In your terminal:
+#
+# pre-commit install
+# pre-commit install-hooks
+#
+
+# This will install the mypy check as a push hook, so it won't run on every commit, only on push.
+#
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+default_stages: [manual,pre-commit]
+
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.6.0
+  hooks:
+    - id: check-ast
+    - id: check-json
+    - id: check-merge-conflict
+    - id: check-toml
+    - id: check-yaml
+
+- repo: local
+  hooks:
+    - id: ruff
+      name: ruff check
+      description: "Run 'ruff' for extremely fast Python linting"
+      entry: ruff check --force-exclude --fix
+      language: python
+      types_or: [python, pyi]
+      require_serial: true
+
+    - id: ruff-format
+      name: ruff format
+      description: "Run 'ruff format' for extremely fast Python formatting"
+      entry: ruff format --force-exclude
+      language: python
+      types_or: [python, pyi]
+      args: []
+      require_serial: true
+      additional_dependencies: []
+      minimum_pre_commit_version: "2.9.2"
+
+    - id: doc901
+      name: doc901
+      description: "Enforce docstring on complex methods and functions"
+      entry: doc901 --exclude=**/tests --ignore=.doc901_ignore.json
+      language: python
+      types_or: [python]
+      require_serial: true
