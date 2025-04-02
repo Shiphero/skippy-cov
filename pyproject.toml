@@ -36,7 +36,9 @@ dev = [
     "mypy>=0.991",
     "pytest-cov>=4.0.0",
     "ruff>=0.9.2",
-    "types-unidiff"
+    "types-unidiff",
+    "doc901"
+
     
 ]
 
