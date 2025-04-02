@@ -50,3 +50,11 @@ repos:
       language: python
       types_or: [python]
       require_serial: true
+
+    - id: mypy
+      name: mypy
+      description: "Run 'mypy' for type checking"
+      entry: mypy
+      language: python
+      types_or: [python]
+      require_serial: true
