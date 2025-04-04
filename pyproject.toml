@@ -2,7 +2,9 @@
 name = "skippy-cov"
 version = "0.0.1"
 description = "Selectively run tests based on the current git diff and the collected data from previous tests runs"
-authors = [{ name = "Mariano Garcia Berrotaran", email = "mariano.garciaberrotaran@shiphero.com" }]
+authors = [
+    { name = "Mariano Garcia Berrotaran", email = "mariano.garciaberrotaran@shiphero.com" },
+]
 readme = "README.md"
 keywords = ['python']
 requires-python = ">=3.8,<4.0"
@@ -18,11 +20,7 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
-dependencies = [
-"unidiff >=0.7.5",
-"pytest>=8.3.5",
-"pytest-cov>=5.0.0",
-]
+dependencies = ["unidiff >=0.7.5", "coverage>=7.6"]
 scripts = { "skippy-cov" = "skippy_cov.__main__:main" }
 
 [project.urls]
@@ -37,9 +35,9 @@ dev = [
     "pytest-cov>=4.0.0",
     "ruff>=0.9.2",
     "types-unidiff",
-    "doc901"
+    "doc901",
 
-    
+
 ]
 
 [build-system]
@@ -88,7 +86,8 @@ select = [
     # mccabe
     "C90",
     # pycodestyle
-    "E", "W",
+    "E",
+    "W",
     # pyflakes
     "F",
     # pygrep-hooks
@@ -119,4 +118,3 @@ skip_empty = true
 [tool.coverage.run]
 branch = true
 source = ["skippy_cov"]
-

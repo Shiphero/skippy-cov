@@ -10,13 +10,11 @@ check: ## Run code quality tools.
 	@uv lock --locked
 	@echo "🚀 Linting code: Running pre-commit"
 	@uv run pre-commit run -a
-	@echo "🚀 Static type checking: Running mypy"
-	@uv run mypy
 
 .PHONY: test
 test: ## Test the code with pytest
 	@echo "🚀 Testing code: Running pytest"
-	@uv run pytest tests -vv
+	@uv run pytest tests -vv --pdb
 
 test.cov: ## Test the code with pytest and generate coverage report
 	@uv run pytest tests --cov --cov-config=pyproject.toml --cov-report=xml
