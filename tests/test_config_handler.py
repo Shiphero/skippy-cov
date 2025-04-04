@@ -31,16 +31,16 @@ pythonpath = "/src"
 """
 
 
-T = Callable[[Path], config_handler.ConfigHandler]
+GetConfigFun = Callable[[Path], config_handler.ConfigHandler]
 
 
 @pytest.fixture
-def get_config() -> Generator[T]:
+def get_config() -> Generator[GetConfigFun, None, None]:
     yield lambda base_location: config_handler.get_config(base_location)
     config_handler._config = None  # reset borg
 
 
-def test_config_handler_presedence(get_config: T, mocker: MockFixture):
+def test_config_handler_presedence(get_config: GetConfigFun, mocker: MockFixture):
     """
     Test that .pytest.ini has the highest priority regardless of order
     """
@@ -73,7 +73,7 @@ def test_config_handler_presedence(get_config: T, mocker: MockFixture):
 def test_config_handler_parser(
     config_name: str,
     config_fixture: str,
-    get_config: T,
+    get_config: GetConfigFun,
     mocker: MockFixture,
     request,
 ):
@@ -92,7 +92,7 @@ def test_config_handler_parser(
     assert cfg.get_value("pythonpath") == '"/src"'
 
 
-def test_config_handler_no_config_found(mocker: MockFixture, get_config: T):
+def test_config_handler_no_config_found(mocker: MockFixture, get_config: GetConfigFun):
     mocker.patch(
         "skippy_cov.config_handler.Path.iterdir",
         return_value=[],
@@ -104,7 +104,7 @@ def test_config_handler_no_config_found(mocker: MockFixture, get_config: T):
 
 def test_config_handler_no_config_no_value(
     mocker: MockFixture,
-    get_config: T,
+    get_config: GetConfigFun,
 ):
     mocker.patch(
         "skippy_cov.config_handler.Path.iterdir",

@@ -54,9 +54,6 @@ class ConfigFileHandler:
         config = tomllib.loads(self.config_path.read_text())
         self.values = config.get(self.section_name, None)
 
-    def __bool__(self) -> bool:
-        return self.values is not None
-
 
 class IniHandler(ConfigFileHandler):
     section_name = "pytest"
