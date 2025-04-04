@@ -1,13 +1,24 @@
 from __future__ import annotations
 
 import configparser
+import sys
 from enum import Enum
 from pathlib import Path
 from typing import ClassVar
 
+"""
+mypy doesn't like this
 try:
     import tomllib
 except ImportError:
+    import tomli as tomllib
+
+see https://github.com/python/mypy/issues/13914
+"""
+
+if sys.version_info >= (3, 11):
+    import tomllib
+else:
     import tomli as tomllib
 
 
