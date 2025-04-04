@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import ast
 import logging
-import os
 from pathlib import Path
 
 from skippy_cov.diff_handler import DiffHandler
@@ -34,15 +33,15 @@ def discover_tests_in_file(file_path: Path) -> list[str]:
             "doesn't match test file pattern."
         )
         return []
-    if not os.path.exists(file_path):
-        logger.debug(f"Skipping AST discovery: File path '{file_path}' does not exist.")
-        return []
-    if not os.path.isfile(file_path):
-        logger.debug(f"Skipping AST discovery: Path '{file_path}' is not a file.")
+    if not file_path.exists() or not file_path.is_file():
+        logger.debug(
+            f"Skipping AST discovery: File path '{file_path}' "
+            "does not exist or is not a file."
+        )
         return []
 
     try:
-        tree = ast.parse(file_path.read_text(), filename=file_path)
+        tree = ast.parse(file_path.read_text(), filename=file_path.name)
 
     except Exception as e:
         logger.warning(

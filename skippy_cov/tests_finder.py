@@ -38,10 +38,12 @@ class ASTTestsFinder(ast.NodeVisitor):
 
         if node.name.startswith("test_"):
             if self.current_class_name:
-                test_id = f"{self.file_path}::{self.current_class_name}::{node.name}"
+                test_id = (
+                    f"{self.file_path.name}::{self.current_class_name}::{node.name}"
+                )
                 self.tests.append(test_id)
             else:
-                test_id = f"{self.file_path}::{node.name}"
+                test_id = f"{self.file_path.name}::{node.name}"
                 self.tests.append(test_id)
 
     def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> None:
