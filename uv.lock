@@ -669,9 +669,8 @@ name = "skippy-cov"
 version = "0.0.1"
 source = { editable = "." }
 dependencies = [
-    { name = "pytest" },
-    { name = "pytest-cov", version = "5.0.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.9'" },
-    { name = "pytest-cov", version = "6.1.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.9'" },
+    { name = "coverage", version = "7.6.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.9'" },
+    { name = "coverage", version = "7.8.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.9'" },
     { name = "unidiff" },
 ]
 
@@ -692,8 +691,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "pytest", specifier = ">=8.3.5" },
-    { name = "pytest-cov", specifier = ">=5.0.0" },
+    { name = "coverage", specifier = ">=7.6" },
     { name = "unidiff", specifier = ">=0.7.5" },
 ]
 
