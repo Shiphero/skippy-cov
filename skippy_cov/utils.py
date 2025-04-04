@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from collections import defaultdict
 from fnmatch import fnmatch
 from pathlib import Path
 
@@ -42,21 +41,15 @@ def _fix_test_name(test_name: str) -> str:
     return test_name.rsplit("|", 1)[0]
 
 
-def load_coverage_map(filepath: Path) -> defaultdict[Path, set[str]]:
-    """
-    Load coverage data from a coverage database file.
-    Maps file paths to sets of test names. (skipping phase names)
-    """
-    db = coverage.CoverageData(filepath)
-    db.read()
-    files = db._file_map.keys()
-    coverage_map: defaultdict[Path, set[str]] = defaultdict(set)
+class CoverageMap:
+    db: coverage.CoverageData
 
-    for file in files:
-        tests = db.contexts_by_lineno(file)
-        for line_tests in tests.values():
-            coverage_map[Path(file)] = coverage_map[Path(file)].union([
-                _fix_test_name(test) for test in line_tests
-            ])
+    def __init__(self, filepath: Path):
+        self.db = coverage.CoverageData(filepath.name)
+        self.db.read()
 
-    return coverage_map
+    def get_tests(self, filepath: Path):
+        tests = set()
+        for line_tests in self.db.contexts_by_lineno(filepath.name).values():
+            tests |= {_fix_test_name(test) for test in line_tests}
+        return tests
