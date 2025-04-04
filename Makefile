@@ -14,7 +14,7 @@ check: ## Run code quality tools.
 .PHONY: test
 test: ## Test the code with pytest
 	@echo "🚀 Testing code: Running pytest"
-	@uv run pytest tests -vv --pdb
+	@uv run pytest tests -vv
 
 test.cov: ## Test the code with pytest and generate coverage report
 	@uv run pytest tests --cov --cov-config=pyproject.toml --cov-report=xml
