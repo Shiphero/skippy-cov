@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 from fnmatch import fnmatch
 from pathlib import Path
 
@@ -8,6 +9,22 @@ import coverage
 from skippy_cov.config_handler import get_config
 
 DEFAULT_GLOB_PATTERN = "test_*.py"
+
+
+@dataclass
+class TestCandidate:
+    path: Path
+    tests: set[str]
+
+    def __lt__(self, other: object) -> bool:
+        if not isinstance(other, TestCandidate):
+            raise NotImplementedError
+        return self.path < other.path
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, TestCandidate):
+            raise NotImplementedError
+        return self.path == other.path and self.tests == other.tests
 
 
 def is_test_file(file_path: Path) -> bool:
@@ -48,8 +65,10 @@ class CoverageMap:
         self.db = coverage.CoverageData(filepath.name)
         self.db.read()
 
-    def get_tests(self, filepath: Path):
+    def get_tests(self, filepath: Path) -> TestCandidate | None:
         tests = set()
         for line_tests in self.db.contexts_by_lineno(filepath.name).values():
             tests |= {_fix_test_name(test) for test in line_tests}
-        return tests
+        if tests:
+            return TestCandidate(path=filepath, tests=tests)
+        return None

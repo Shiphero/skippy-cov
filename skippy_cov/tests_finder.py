@@ -16,7 +16,7 @@ class ASTTestsFinder(ast.NodeVisitor):
 
     def __init__(self, file_path: Path):
         self.file_path = file_path
-        self.tests: list[str] = []
+        self.tests: set[str] = set()
         self.current_class_name: str | None = None
 
     def visit_ClassDef(self, node: ast.ClassDef) -> None:
@@ -38,11 +38,11 @@ class ASTTestsFinder(ast.NodeVisitor):
 
         if node.name.startswith("test_"):
             if self.current_class_name:
-                test_id = f"{self.file_path.as_posix()}::{self.current_class_name}::{node.name}"
-                self.tests.append(test_id)
+                test_id = f"{self.current_class_name}::{node.name}"
+                self.tests.add(test_id)
             else:
-                test_id = f"{self.file_path.as_posix()}::{node.name}"
-                self.tests.append(test_id)
+                test_id = node.name
+                self.tests.add(test_id)
 
     def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> None:
         """Visit Async Function (and Method) Definitions."""

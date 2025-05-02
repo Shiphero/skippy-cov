@@ -6,7 +6,7 @@ from unittest.mock import MagicMock
 import pytest
 from pytest_mock import MockerFixture
 
-from skippy_cov.utils import CoverageMap
+from skippy_cov.utils import CoverageMap, TestCandidate
 
 
 @pytest.fixture
@@ -23,7 +23,10 @@ def mocked_coverage(mocker: MockerFixture) -> MagicMock:
 
 def test_load_coverage_map(mocked_coverage: MagicMock) -> None:
     coverage_map = CoverageMap(Path("coverage.db"))
-    assert coverage_map.get_tests(Path("test.py")) == {
-        "test.py::test1",
-        "test.py::test2",
-    }
+    assert coverage_map.get_tests(Path("test.py")) == TestCandidate(
+        path=Path("test.py"),
+        tests={
+            "test.py::test1",
+            "test.py::test2",
+        },
+    )

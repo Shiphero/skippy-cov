@@ -65,11 +65,11 @@ def test_find_top_level_tests(module_level_tests_ast: ast.Module) -> None:
 
     finder = ASTTestsFinder(Path("foo.py"))
     finder.visit(module_level_tests_ast)
-    assert finder.tests == [
-        "foo.py::test_foo",
-        "foo.py::test_parameterized",
-        "foo.py::test_bar",
-    ]
+    assert finder.tests == {
+        "test_foo",
+        "test_parameterized",
+        "test_bar",
+    }
 
 
 def test_find_class_level_tests(class_level_tests_ast: ast.Module) -> None:
@@ -81,11 +81,11 @@ def test_find_class_level_tests(class_level_tests_ast: ast.Module) -> None:
 
     finder = ASTTestsFinder(Path("foo.py"))
     finder.visit(class_level_tests_ast)
-    assert finder.tests == [
-        "foo.py::TestFoo::test_foo",
-        "foo.py::TestFoo::test_parameterized",
-        "foo.py::TestFoo::test_bar",
-    ]
+    assert finder.tests == {
+        "TestFoo::test_foo",
+        "TestFoo::test_parameterized",
+        "TestFoo::test_bar",
+    }
 
 
 def test_do_not_find_tests_in_init(class_level_tests_ast_with_init: ast.Module) -> None:
@@ -94,4 +94,4 @@ def test_do_not_find_tests_in_init(class_level_tests_ast_with_init: ast.Module) 
     """
     finder = ASTTestsFinder(Path("foo.py"))
     finder.visit(class_level_tests_ast_with_init)
-    assert finder.tests == []
+    assert finder.tests == set()

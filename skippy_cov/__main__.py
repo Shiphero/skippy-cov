@@ -19,8 +19,7 @@ def run(diff_file: Path, coverage_file: Path) -> str:
     if not tests:
         logger.info("No specific tests selected to run based on changes and coverage.")
 
-    output_content = " ".join(set(tests))
-    print(output_content)
+    output_content = " ".join([])
     return output_content
 
 
