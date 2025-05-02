@@ -26,6 +26,12 @@ class FileTestCandidate:
             raise NotImplementedError
         return self.path == other.path and self.tests == other.tests
 
+    def as_set(self) -> set[str]:
+        tests = set()
+        for test in self.tests:
+            tests.add(f"{self.path.as_posix()}::{test}")
+        return tests
+
 
 def is_test_file(file_path: Path) -> bool:
     """
@@ -56,6 +62,34 @@ def _fix_test_name(test_name: str) -> str:
     Most likely, this is the phase name and not part of the test name or parameters.
     """
     return test_name.rsplit("|", 1)[0]
+
+
+def filter_by_path(
+    candidates: list[FileTestCandidate], from_folder: Path, keep_prefix: bool = True
+) -> list[FileTestCandidate]:
+    """
+    Filters a list of FileTestCandidate objects based on a starting folder and depth.
+
+    Args:
+        candidates: A list of FileTestCandidate objects to filter.
+        from_folder: A Path object representing the starting folder.
+        keep_prefix: A boolean, if true, the origial path is kept, if false it's removed
+    Returns:
+        A new list of FileTestCandidate objects that satisfy the filtering criteria.
+    """
+    filtered_candidates: list[FileTestCandidate] = []
+
+    for candidate in candidates:
+        try:
+            relative_path = candidate.path.relative_to(from_folder)
+        except ValueError:
+            # The candidate is not within the from_folder, so skip it
+            continue
+        if not keep_prefix:
+            candidate.path = relative_path
+        filtered_candidates.append(candidate)
+
+    return filtered_candidates
 
 
 class CoverageMap:

@@ -3,7 +3,12 @@ from pathlib import Path
 import pytest
 from pytest_mock import MockFixture
 
-from skippy_cov.utils import _fix_test_name, is_test_file
+from skippy_cov.utils import (
+    FileTestCandidate,
+    _fix_test_name,
+    filter_by_path,
+    is_test_file,
+)
 
 
 @pytest.mark.parametrize(
@@ -43,3 +48,36 @@ def test_config_is_test_file(mocker: MockFixture) -> None:
 )
 def test_fix_test_name(name: str, expected: str) -> None:
     assert _fix_test_name(name) == expected
+
+
+def test_filter_paths():
+    candidates = [
+        FileTestCandidate(path=Path("/good/1"), tests=set()),
+        FileTestCandidate(path=Path("/good/2"), tests=set()),
+        FileTestCandidate(path=Path("/bad/1"), tests=set()),
+        FileTestCandidate(path=Path("/bad/2"), tests=set()),
+    ]
+    expected = [
+        FileTestCandidate(path=Path("1"), tests=set()),
+        FileTestCandidate(path=Path("2"), tests=set()),
+    ]
+    assert filter_by_path(candidates, Path("/good"), keep_prefix=False) == expected
+
+
+def test_filter_paths_no_prefix():
+    candidates = [
+        FileTestCandidate(path=Path("/good/1"), tests=set()),
+        FileTestCandidate(path=Path("/good/2"), tests=set()),
+        FileTestCandidate(path=Path("/bad/1"), tests=set()),
+        FileTestCandidate(path=Path("/bad/2"), tests=set()),
+    ]
+    expected = [
+        FileTestCandidate(path=Path("/good/1"), tests=set()),
+        FileTestCandidate(path=Path("/good/2"), tests=set()),
+    ]
+    assert filter_by_path(candidates, Path("/good"), keep_prefix=True) == expected
+
+
+def test_generate_set():
+    candidate = FileTestCandidate(path=Path("tests.py"), tests={"test1", "test2"})
+    assert candidate.as_set() == {"tests.py::test1", "tests.py::test2"}
