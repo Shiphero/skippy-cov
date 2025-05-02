@@ -31,12 +31,12 @@ pythonpath = "/src"
 """
 
 
-GetConfigFun = Callable[[Path], config_handler.ConfigHandler]
+GetConfigFun = Callable[[], config_handler.ConfigHandler]
 
 
 @pytest.fixture
 def get_config() -> Generator[GetConfigFun, None, None]:
-    yield lambda base_location: config_handler.get_config(base_location)
+    yield lambda: config_handler.get_config()
     config_handler._config = None  # reset borg
 
 
@@ -54,7 +54,7 @@ def test_config_handler_presedence(get_config: GetConfigFun, mocker: MockFixture
         ],
     )
     _ = mocker.patch("skippy_cov.config_handler.Path.read_text", return_value="")
-    cfg = get_config(Path.cwd())
+    cfg = get_config()
     assert bool(cfg)
     assert cfg.handler
     assert cfg.handler.config_path.name == "pytest.ini"
@@ -87,7 +87,7 @@ def test_config_handler_parser(
         return_value=request.getfixturevalue(config_fixture),
     )
     assert config_handler._config is None  # sanity check
-    cfg = get_config(Path.cwd())
+    cfg = get_config()
     assert cfg.get_value("addopts") == '"--cov"'
     assert cfg.get_value("pythonpath") == '"/src"'
 
@@ -98,7 +98,7 @@ def test_config_handler_no_config_found(mocker: MockFixture, get_config: GetConf
         return_value=[],
     )
     mocker.patch("skippy_cov.config_handler.Path.parents", return_value=[])
-    cfg = get_config(Path.cwd())
+    cfg = get_config()
     assert not bool(cfg)
 
 
@@ -111,5 +111,5 @@ def test_config_handler_no_config_no_value(
         return_value=[],
     )
     mocker.patch("skippy_cov.config_handler.Path.parents", return_value=[])
-    cfg = get_config(Path.cwd())
+    cfg = get_config()
     assert cfg.get_value("addopts") is None

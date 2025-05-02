@@ -11,9 +11,9 @@ from skippy_cov.utils import CoverageMap
 logger = logging.getLogger(__name__)
 
 
-def main(args: argparse.Namespace) -> None:
-    diff_handler = DiffHandler(args.diff_file.read_text())
-    coverage_map = CoverageMap(args.coverage_map_file)
+def run(diff_file: Path, coverage_file: Path) -> str:
+    diff_handler = DiffHandler(diff_file.read_text())
+    coverage_map = CoverageMap(coverage_file)
     selected_tests = select_tests_to_run(diff_handler, coverage_map)
     tests = sorted(selected_tests)
     if not tests:
@@ -21,9 +21,10 @@ def main(args: argparse.Namespace) -> None:
 
     output_content = " ".join(set(tests))
     print(output_content)
+    return output_content
 
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(
         description="Select pytest tests based on diff and coverage."
     )
@@ -47,4 +48,4 @@ if __name__ == "__main__":
     if args.debug:
         logging.basicConfig(level=logging.DEBUG)
 
-    main(args)
+    run(args.diff_file, args.coverage_file)

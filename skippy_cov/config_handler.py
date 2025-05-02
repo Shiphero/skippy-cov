@@ -25,10 +25,10 @@ else:
 _config: ConfigHandler | None = None
 
 
-def get_config(base_location: Path) -> ConfigHandler:
+def get_config() -> ConfigHandler:
     global _config
     if not _config:
-        _config = ConfigHandler(base_location)
+        _config = ConfigHandler(Path.cwd())
     return _config
 
 

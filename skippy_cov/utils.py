@@ -22,7 +22,7 @@ def is_test_file(file_path: Path) -> bool:
     # TODO: consider pytest flags such as `ignore`, `addopts`, etc...
     # config_handler.ConfigHandler should already handle it,
     #   but I want to have something working before sincking more hours into this
-    cfg = get_config(Path.cwd())
+    cfg = get_config()
     if (
         bool(cfg)
         and (patterns := cfg.get_value("python_files"))
