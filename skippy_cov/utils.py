@@ -12,17 +12,17 @@ DEFAULT_GLOB_PATTERN = "test_*.py"
 
 
 @dataclass
-class TestCandidate:
+class FileTestCandidate:
     path: Path
     tests: set[str]
 
     def __lt__(self, other: object) -> bool:
-        if not isinstance(other, TestCandidate):
+        if not isinstance(other, FileTestCandidate):
             raise NotImplementedError
         return self.path < other.path
 
     def __eq__(self, other: object) -> bool:
-        if not isinstance(other, TestCandidate):
+        if not isinstance(other, FileTestCandidate):
             raise NotImplementedError
         return self.path == other.path and self.tests == other.tests
 
@@ -65,10 +65,10 @@ class CoverageMap:
         self.db = coverage.CoverageData(filepath.name)
         self.db.read()
 
-    def get_tests(self, filepath: Path) -> TestCandidate | None:
+    def get_tests(self, filepath: Path) -> FileTestCandidate | None:
         tests = set()
         for line_tests in self.db.contexts_by_lineno(filepath.name).values():
             tests |= {_fix_test_name(test) for test in line_tests}
         if tests:
-            return TestCandidate(path=filepath, tests=tests)
+            return FileTestCandidate(path=filepath, tests=tests)
         return None

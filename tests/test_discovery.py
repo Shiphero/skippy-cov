@@ -3,7 +3,7 @@ from __future__ import annotations
 from pytest_mock import MockerFixture
 
 from skippy_cov import discover_tests_in_file
-from skippy_cov.utils import TestCandidate
+from skippy_cov.utils import FileTestCandidate
 
 
 def test_discover_tests_in_file(mocker: MockerFixture) -> None:
@@ -14,7 +14,7 @@ def test_discover_tests_in_file(mocker: MockerFixture) -> None:
     mock.exists.return_value = True
     mock.as_posix.return_value = "test_file.py"
     result = discover_tests_in_file(mock)
-    assert result == TestCandidate(
+    assert result == FileTestCandidate(
         path=mock,
         tests={"test_bar", "test_foo"},
     )

@@ -6,12 +6,12 @@ from pathlib import Path
 
 from skippy_cov.diff_handler import DiffHandler
 from skippy_cov.tests_finder import ASTTestsFinder
-from skippy_cov.utils import CoverageMap, TestCandidate, is_test_file
+from skippy_cov.utils import CoverageMap, FileTestCandidate, is_test_file
 
 logger = logging.getLogger(__name__)
 
 
-def discover_tests_in_file(file_path: Path) -> TestCandidate | None:
+def discover_tests_in_file(file_path: Path) -> FileTestCandidate | None:
     """
     Discovers tests within a given Python file using AST parsing.
     Finds top-level functions (sync/async) starting with 'test_' and
@@ -66,17 +66,17 @@ def discover_tests_in_file(file_path: Path) -> TestCandidate | None:
         logger.warning(f"Error during AST traversal of '{file_path}': {e}")
         return None
 
-    return TestCandidate(path=file_path, tests=finder.tests)
+    return FileTestCandidate(path=file_path, tests=finder.tests)
 
 
 def select_tests_to_run(
     diff_handler: DiffHandler,
     coverage_map: CoverageMap,
-) -> list[TestCandidate]:
+) -> list[FileTestCandidate]:
     """
     Determines the set of tests to run based on changed files and coverage.
     """
-    tests_to_run: list[TestCandidate] = []
+    tests_to_run: list[FileTestCandidate] = []
 
     logger.debug(f"Processing {len(diff_handler.changed_files)} changed file(s)...")
     logger.debug(f"Changed files: {diff_handler.changed_files}")
