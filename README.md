@@ -10,7 +10,7 @@
 1.  **Generate a Diff File:** Create a diff file using Git.
 
     ```bash
-git diff > my_changes.diff
+    git diff > my_changes.diff
     ```
 
 2.  **Run Coverage Analysis:** Generate a `.coverage` database using `coverage.py`.
@@ -23,7 +23,7 @@ coverage report
 3.  **Filter Tests with skippy-cov:** Use `skippy-cov` to filter tests based on the diff file and coverage database.
 
     ```bash
-pytest $(skippy-cov --diff-file my_changes.diff --coverage-map-file .coverage)
+    pytest $(skippy-cov --diff-file my_changes.diff --coverage-map-file .coverage)
     ```
 
 ## Configuration
