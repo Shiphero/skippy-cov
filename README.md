@@ -16,8 +16,8 @@
 2.  **Run Coverage Analysis:** Generate a `.coverage` database using `coverage.py`.
 
     ```bash
-coverage run -m pytest
-coverage report
+    coverage run -m pytest
+    coverage report
     ```
 
 3.  **Filter Tests with skippy-cov:** Use `skippy-cov` to filter tests based on the diff file and coverage database.
