@@ -22,6 +22,8 @@ class ASTTestsFinder(ast.NodeVisitor):
     def visit_ClassDef(self, node: ast.ClassDef) -> None:
         """Visit Class Definitions."""
 
+        # TODO: consider python_classes and python_functions parameters on config
+        # SEE: https://docs.pytest.org/en/stable/example/pythoncollection.html#changing-naming-conventions
         class_has_init_method = any(
             hasattr(method, "name") and method.name == "__init__" for method in node.body
         )
@@ -36,6 +38,8 @@ class ASTTestsFinder(ast.NodeVisitor):
     def visit_FunctionDef(self, node: ast.FunctionDef | ast.AsyncFunctionDef) -> None:
         """Visit Function (and Method) Definitions."""
 
+        # TODO: consider python_classes and python_functions parameters on config
+        # SEE: https://docs.pytest.org/en/stable/example/pythoncollection.html#changing-naming-conventions
         if node.name.startswith("test_"):
             if self.current_class_name:
                 test_id = f"{self.current_class_name}::{node.name}"

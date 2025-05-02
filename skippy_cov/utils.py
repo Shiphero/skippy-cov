@@ -44,7 +44,8 @@ def is_test_file(file_path: Path) -> bool:
 
     # TODO: consider pytest flags such as `ignore`, `addopts`, etc...
     # config_handler.ConfigHandler should already handle it,
-    #   but I want to have something working before sincking more hours into this
+    #   but I want to have something working before sinking more hours into this
+    # SEE: https://docs.pytest.org/en/stable/example/pythoncollection.html#changing-naming-conventions
     cfg = get_config()
     if (
         bool(cfg)
