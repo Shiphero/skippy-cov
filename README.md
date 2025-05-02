@@ -17,7 +17,6 @@
 
     ```bash
     coverage run -m pytest
-    coverage report
     ```
 
 3.  **Filter Tests with skippy-cov:** Use `skippy-cov` to filter tests based on the diff file and coverage database.
