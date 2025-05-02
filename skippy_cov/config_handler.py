@@ -63,7 +63,10 @@ class ConfigFileHandler:
 
     def _parse_toml(self) -> None:
         config = tomllib.loads(self.config_path.read_text())
-        self.values = config.get(self.section_name, None)
+        # TOML nests the config, so we dig deep to find it
+        for section in self.section_name.split("."):
+            config = config.get(section, None)
+        self.values = config
 
 
 class IniHandler(ConfigFileHandler):
