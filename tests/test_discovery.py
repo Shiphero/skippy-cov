@@ -11,6 +11,6 @@ def test_discover_tests_in_file(mocker: MockerFixture) -> None:
     mock.read_text.return_value = "def test_foo(): pass\ndef test_bar(): pass"
     mock.is_file.return_value = True
     mock.exists.return_value = True
-    mock.name = "test_file.py"
+    mock.as_posix.return_value = "test_file.py"
     result = discover_tests_in_file(mock)
     assert result == ["test_file.py::test_foo", "test_file.py::test_bar"]

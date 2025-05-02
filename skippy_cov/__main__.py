@@ -48,4 +48,4 @@ def main():
     if args.debug:
         logging.basicConfig(level=logging.DEBUG)
 
-    run(args.diff_file, args.coverage_file)
+    run(args.diff_file, args.coverage_map_file)

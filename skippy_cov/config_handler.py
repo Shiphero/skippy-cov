@@ -78,7 +78,7 @@ class SetupCfgHandler(IniHandler):
 
 class PyprojectTomlHandler(ConfigFileHandler):
     section_name = "tool.pytest.ini_options"
-    parser = ConfigFormat.INI
+    parser = ConfigFormat.TOML
 
 
 class ConfigHandler:

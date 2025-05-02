@@ -10,8 +10,8 @@ from skippy_cov import config_handler
 @pytest.fixture
 def pytest_ini():
     return """[pytest]
-addopts = "--cov"
-pythonpath = "/src"
+addopts = --cov
+pythonpath = /src
 """
 
 
@@ -26,8 +26,8 @@ pythonpath = "/src"
 @pytest.fixture
 def setup_cfg():
     return """[tool:pytest]
-addopts = "--cov"
-pythonpath = "/src"
+addopts = --cov
+pythonpath = /src
 """
 
 
@@ -88,8 +88,8 @@ def test_config_handler_parser(
     )
     assert config_handler._config is None  # sanity check
     cfg = get_config()
-    assert cfg.get_value("addopts") == '"--cov"'
-    assert cfg.get_value("pythonpath") == '"/src"'
+    assert cfg.get_value("addopts") == "--cov"
+    assert cfg.get_value("pythonpath") == "/src"
 
 
 def test_config_handler_no_config_found(mocker: MockFixture, get_config: GetConfigFun):
