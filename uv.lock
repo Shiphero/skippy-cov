@@ -671,6 +671,7 @@ source = { editable = "." }
 dependencies = [
     { name = "coverage", version = "7.6.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.9'" },
     { name = "coverage", version = "7.8.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.9'" },
+    { name = "tomli", marker = "python_full_version < '3.11'" },
     { name = "unidiff" },
 ]
 
@@ -692,6 +693,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "coverage", specifier = ">=7.6" },
+    { name = "tomli", marker = "python_full_version < '3.11'" },
     { name = "unidiff", specifier = ">=0.7.5" },
 ]
 
