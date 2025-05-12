@@ -54,7 +54,7 @@ def pytest_addoption(parser):
 
 
 @pytest.hookimpl(tryfirst=True)
-def pytest_collection_modifyitems(session, config, items):
+def pytest_configure(config):
     """
     Attempts to filter tests using skippy-cov
     """
@@ -73,15 +73,7 @@ def pytest_collection_modifyitems(session, config, items):
     keep_prefix = config.getoption("skippy_cov_keep_prefix")
     selected_tests = run(diff_file, cov_map_file, relative_to, keep_prefix)
     if selected_tests:
-        original = list(items)
-        items.clear()
-        wanted = set(original)
-        for item in original:
-            if item.nodeid in wanted:
-                items.append(item)
-        missing = wanted - {item.nodeid for item in items}
-        if missing:
-            logging.warn(f"skippy-cov: missing tests: {missing}")
+        config.args = selected_tests
     else:
         logging.warn(
             "skippy-cov: couldn't find any tests to filter running the full suite."
