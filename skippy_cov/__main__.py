@@ -12,8 +12,15 @@ logger = logging.getLogger(__name__)
 
 
 def run(
-    diff_file: Path, coverage_file: Path, relative_to: Path | None, keep_prefix: bool
-) -> str:
+    diff_file: Path,
+    coverage_file: Path,
+    relative_to: Path | None,
+    keep_prefix: bool,
+    display: bool = False,
+) -> set[str]:
+    """
+    Run the test filter. If `display` = True will also print the output to stdout
+    """
     diff_handler = DiffHandler(diff_file.read_text())
     coverage_map = CoverageMap(coverage_file)
     selected_tests = select_tests_to_run(diff_handler, coverage_map)
@@ -29,8 +36,9 @@ def run(
         output |= test.as_set()
 
     output_content = " ".join(output)
-    print(output_content)
-    return output_content
+    if display:
+        print(output_content)
+    return output
 
 
 def main():
@@ -40,13 +48,13 @@ def main():
     parser.add_argument(
         "--diff-file",
         required=True,
-        help="Path to a file containing the list of changed files (one per line).",
+        help="Path to a file containing the git diff.",
         type=Path,
     )
     parser.add_argument(
         "--coverage-map-file",
         required=True,
-        help="Path to the coverage map file (JSON format expected).",
+        help="Path to the coverage map file (.coverage sqlite database).",
         type=Path,
     )
     parser.add_argument(
@@ -77,4 +85,10 @@ def main():
     if args.debug:
         logging.basicConfig(level=logging.DEBUG)
 
-    run(args.diff_file, args.coverage_map_file, args.relative_to, args.keep_prefix)
+    run(
+        args.diff_file,
+        args.coverage_map_file,
+        args.relative_to,
+        args.keep_prefix,
+        display=True,
+    )

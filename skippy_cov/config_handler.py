@@ -65,7 +65,8 @@ class ConfigFileHandler:
         config = tomllib.loads(self.config_path.read_text())
         # TOML nests the config, so we dig deep to find it
         for section in self.section_name.split("."):
-            config = config.get(section, None)
+            if config:
+                config = config.get(section, None)
         self.values = config
 
 
