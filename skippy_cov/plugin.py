@@ -24,32 +24,28 @@ def pytest_addoption(parser):
         required=False,
         help="Path to a file containing the git diff.",
         type=Path,
+        default=Path("changes.diff"),
     )
     group.addoption(
         "--skippy-cov-coverage-map-file",
         required=False,
         help="Path to the coverage map file (.coverage sqlite database).",
         type=Path,
-    )
-    group.addoption(
-        "--skippy-cov-relative-to",
-        required=False,
-        help="Display only tests contained in a folder",
-        type=Path,
-        default=None,
+        default=Path(".coverage"),
     )
     group.addoption(
         "--skippy-cov-keep-prefix",
         required=False,
+        default=True,
         dest="skippy_cov_keep_prefix",
         action="store_true",
-        help="When using --relative-to, determine if the original path should be kept or removed",
+        help="When using --skippy-cov-relative-to, determine if the original path should be kept or removed",
     )
     group.addoption(
         "--skippy-cov-strip-prefix",
         dest="skippy_cov_keep_prefix",
         action="store_false",
-        help="When using --relative-to, determine if the original path should be kept or removed",
+        help="When using --skippy-cov-relative-to, determine if the original path should be kept or removed",
     )
 
 
@@ -61,20 +57,17 @@ def pytest_configure(config):
     skippy_cov = config.getoption("skippy_cov")
     diff_file = config.getoption("skippy_cov_diff_file")
     cov_map_file = config.getoption("skippy_cov_coverage_map_file")
+    keep_prefix = config.getoption("skippy_cov_keep_prefix")
     if not skippy_cov:
         return
-    if not diff_file or not cov_map_file:
-        logging.warn(
-            f"skippy-cov can't find all artifacts to run: {diff_file=}, {cov_map_file=}"
+    if not diff_file.exists():
+        pytest.exit(
+            f"skippy-cov: missing file `{diff_file.as_posix()}`. Unable to continue",
+            returncode=1,
         )
-        return
-
-    relative_to = config.getoption("skippy_cov_relative_to")
-    keep_prefix = config.getoption("skippy_cov_keep_prefix")
+    relative_to = [Path(x) for x in config.args if x]
     selected_tests = run(diff_file, cov_map_file, relative_to, keep_prefix)
     if selected_tests:
         config.args = selected_tests
     else:
-        logging.warn(
-            "skippy-cov: couldn't find any tests to filter running the full suite."
-        )
+        pytest.exit("skippy-cov: couldn't find any tests to filter.", returncode=5)

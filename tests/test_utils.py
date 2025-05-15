@@ -5,6 +5,7 @@ from pytest_mock import MockFixture
 
 from skippy_cov.utils import (
     FileTestCandidate,
+    FilterCandidatesError,
     _fix_test_name,
     filter_by_path,
     is_test_file,
@@ -61,10 +62,10 @@ def test_filter_paths():
         FileTestCandidate(path=Path("1"), tests=set()),
         FileTestCandidate(path=Path("2"), tests=set()),
     ]
-    assert filter_by_path(candidates, Path("/good"), keep_prefix=False) == expected
+    assert filter_by_path(candidates, [Path("/good")], keep_prefix=False) == expected
 
 
-def test_filter_paths_no_prefix():
+def test_filter_paths_prefixed():
     candidates = [
         FileTestCandidate(path=Path("/good/1"), tests=set()),
         FileTestCandidate(path=Path("/good/2"), tests=set()),
@@ -75,7 +76,33 @@ def test_filter_paths_no_prefix():
         FileTestCandidate(path=Path("/good/1"), tests=set()),
         FileTestCandidate(path=Path("/good/2"), tests=set()),
     ]
-    assert filter_by_path(candidates, Path("/good"), keep_prefix=True) == expected
+    assert filter_by_path(candidates, [Path("/good")], keep_prefix=True) == expected
+
+
+def test_filter_paths_prefixed_multiple_paths():
+    candidates = [
+        FileTestCandidate(path=Path("/good/1"), tests=set()),
+        FileTestCandidate(path=Path("/good/2"), tests=set()),
+        FileTestCandidate(path=Path("/better/1"), tests=set()),
+        FileTestCandidate(path=Path("/better/2"), tests=set()),
+        FileTestCandidate(path=Path("/bad/1"), tests=set()),
+        FileTestCandidate(path=Path("/bad/2"), tests=set()),
+    ]
+    expected = [
+        FileTestCandidate(path=Path("/good/1"), tests=set()),
+        FileTestCandidate(path=Path("/good/2"), tests=set()),
+        FileTestCandidate(path=Path("/better/1"), tests=set()),
+        FileTestCandidate(path=Path("/better/2"), tests=set()),
+    ]
+    assert (
+        filter_by_path(candidates, [Path("/good"), Path("/better")], keep_prefix=True)
+        == expected
+    )
+
+
+def test_filter_paths_no_prefix_multiple_paths():
+    with pytest.raises(FilterCandidatesError):
+        filter_by_path([], [Path("/1"), Path("/2")], keep_prefix=False)
 
 
 def test_generate_set():

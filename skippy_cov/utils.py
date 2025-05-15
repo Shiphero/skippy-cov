@@ -11,6 +11,12 @@ from skippy_cov.config_handler import get_config
 DEFAULT_GLOB_PATTERN = "test_*.py"
 
 
+class FilterCandidatesError(ValueError):
+    def __init__(self, *args, paths: list[Path], **kwargs):
+        super().__init__(*args, **kwargs)
+        self.message = f"Attempting to relativize based in multiple paths: {paths}"
+
+
 @dataclass
 class FileTestCandidate:
     path: Path
@@ -66,29 +72,38 @@ def _fix_test_name(test_name: str) -> str:
 
 
 def filter_by_path(
-    candidates: list[FileTestCandidate], from_folder: Path, keep_prefix: bool = True
+    candidates: list[FileTestCandidate],
+    from_folders: list[Path],
+    keep_prefix: bool = True,
 ) -> list[FileTestCandidate]:
     """
     Filters a list of FileTestCandidate objects based on a starting folder and depth.
 
     Args:
         candidates: A list of FileTestCandidate objects to filter.
-        from_folder: A Path object representing the starting folder.
+        from_folders: A list of Path objects representing the starting folder.
         keep_prefix: A boolean, if true, the origial path is kept, if false it's removed
     Returns:
         A new list of FileTestCandidate objects that satisfy the filtering criteria.
+    Raises:
+        FilterCandidatesError: If `keep_prefix` is false and there's more than 1 path to filter,
+                    Which doesn't make sense.
     """
     filtered_candidates: list[FileTestCandidate] = []
 
+    if not keep_prefix and len(from_folders) > 1:
+        raise FilterCandidatesError(paths=from_folders)
+
     for candidate in candidates:
-        try:
-            relative_path = candidate.path.relative_to(from_folder)
-        except ValueError:
-            # The candidate is not within the from_folder, so skip it
-            continue
-        if not keep_prefix:
-            candidate.path = relative_path
-        filtered_candidates.append(candidate)
+        for filepath in from_folders:
+            try:
+                relative_path = candidate.path.relative_to(filepath)
+            except ValueError:
+                # The candidate is not within the from_folder, so skip it
+                continue
+            if not keep_prefix:
+                candidate.path = relative_path
+            filtered_candidates.append(candidate)
 
     return filtered_candidates
 
