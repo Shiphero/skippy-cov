@@ -12,7 +12,7 @@ To use this, you first need to generate the following required files:
 * **Generate a Diff File:** Create a diff file using Git.
 
 ```bash
-    git diff > my_changes.diff
+    git diff > changes.diff
 ```
 
 * **Run Coverage Analysis:** Generate a `.coverage` database using `coverage.py`.
@@ -24,19 +24,19 @@ To use this, you first need to generate the following required files:
 Now, `skippy-cov` can be ran as a standalone script that will list the relevant tests.
 
 ```bash
-    skippy-cov --diff-file my_changes.diff --coverage-map-file .coverage
+    skippy-cov --diff-file changes.diff --coverage-map-file .coverage
 ```
 
 But it can also be used as `pytest` plugin:
 
 ```bash
-    pytest --skippy-cov --skippy-cov-diff-file my_changes.diff --skippy-cov-coverage-map-file .coverage
+    pytest --skippy-cov --skippy-cov-diff-file changes.diff --skippy-cov-coverage-map-file .coverage
 ```
 
 which would be the equivalent of doing this:
 
 ```bash
-    pytest $(skippy-cov --diff-file my_changes.diff --coverage-map-file .coverage)
+    pytest $(skippy-cov --diff-file changes.diff --coverage-map-file .coverage)
 ```
 
 ## Configuration
