@@ -1,6 +1,6 @@
 [project]
 name = "skippy-cov"
-version = "0.1.4"
+version = "0.1.5"
 description = "Selectively run tests based on the current git diff and the collected data from previous tests runs"
 authors = [
     { name = "Mariano Garcia Berrotaran", email = "mariano.garciaberrotaran@shiphero.com" },

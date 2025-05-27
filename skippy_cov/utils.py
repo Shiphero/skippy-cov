@@ -117,7 +117,7 @@ class CoverageMap:
 
     def get_tests(self, filepath: Path) -> FileTestCandidate | None:
         tests = set()
-        for line_tests in self.db.contexts_by_lineno(filepath.name).values():
+        for line_tests in self.db.contexts_by_lineno(filepath.as_posix()).values():
             tests |= {_fix_test_name(test) for test in line_tests}
         if tests:
             return FileTestCandidate(path=filepath, tests=tests)
