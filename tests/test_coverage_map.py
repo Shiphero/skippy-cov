@@ -38,5 +38,5 @@ def test_load_coverage_map_nested_folder(mocked_coverage: MagicMock) -> None:
     """
     coverage_map = CoverageMap(Path("coverage.db"))
     candidate = coverage_map.get_tests(Path("tests/test.py"))
-    coverage_map.db.contexts_by_lineno.assert_called_with("tests/test.py")
+    mocked_coverage.contexts_by_lineno.assert_called_with("tests/test.py")
     assert candidate and candidate.path == Path("tests/test.py")
