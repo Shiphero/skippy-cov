@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 
 __version__ = "0.2.0"
 
+
 def discover_tests_in_file(file_path: Path) -> FileTestCandidate | None:
     """
     Discovers tests within a given Python file using AST parsing.
