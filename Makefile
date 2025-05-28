@@ -17,18 +17,15 @@ test: ## Test the code with pytest
 	@uv run pytest tests -vv
 
 .PHONY: test-cov
-test.cov: ## Test the code with pytest and generate coverage report
+test-cov: ## Test the code with pytest and generate coverage report
 	@uv run pytest tests --cov --cov-config=pyproject.toml --cov-report=xml --cov-context=test
 
-.PHONY: build
-build: clean-build ## Build wheel file
-	@echo "🚀 Creating wheel file"
-	@uvx --from build pyproject-build --installer uv
 
-.PHONY: clean-build
-clean-build: ## Clean build artifacts
-	@echo "🚀 Removing build artifacts"
-	@uv run python -c "import shutil; import os; shutil.rmtree('dist') if os.path.exists('dist') else None"
+.PHONY: release
+release: ## Create a GitHub release for the current version
+	@version=$$(grep -Po '(?<=__version__ = \")([^\"]+)' skippy_cov/__init__.py); \
+	echo "🚀 Creating release for version $$version".; \
+	gh release create "$$version" --generate-notes
 
 .PHONY: help
 help:

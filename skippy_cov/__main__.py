@@ -6,7 +6,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from skippy_cov import select_tests_to_run
+from skippy_cov import __version__, select_tests_to_run
 from skippy_cov.diff_handler import DiffHandler
 from skippy_cov.utils import CoverageMap, filter_by_path
 
@@ -137,6 +137,7 @@ def main(argv=None):
     parser.add_argument(
         "--debug", action="store_true", help="Enable debug logging.", default=False
     )
+    parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     args = parser.parse_args(argv)
 
     if args.debug:
