@@ -25,7 +25,7 @@ You can provide the diff to `skippy-cov` in two ways:
       skippy-cov --diff main --coverage-map-file .coverage
   ```
 
-* **Option 1: Use a Diff File**
+* **Option 2: Use a Diff File**
   Generate a diff file using Git:
 
   ```bash
@@ -40,7 +40,7 @@ But it can also be used as `pytest` plugin:
   ```
 
 
-  If you omit the `--diff` argument, it will default to the main branch as determined by your git remote (usually "main" or "master"):
+If you omit the `--diff` argument, it will default to the main branch as determined by your git remote (usually "main" or "master"):
 
   ```bash
       skippy-cov --coverage-map-file .coverage
@@ -73,6 +73,10 @@ Example usages:
 - `skippy-cov --diff changes.diff --coverage-map-file .coverage`
 - `skippy-cov --diff main --coverage-map-file .coverage`
 - `skippy-cov --coverage-map-file .coverage` (defaults to main branch)
+
+#### System Requirements
+
+For the diff argument to work, this requires a working `git` installation.
 
 ## Contributing
 
