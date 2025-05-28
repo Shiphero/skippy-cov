@@ -22,7 +22,7 @@ You can provide the diff to `skippy-cov` in two ways:
   You can specify a branch or ref to diff against (e.g., the main branch):
 
   ```bash
-      skippy-cov --diff main --coverage-map-file .coverage
+      skippy-cov --diff main --coverage-file .coverage
   ```
 
 * **Option 2: Use a Diff File**
@@ -34,28 +34,33 @@ You can provide the diff to `skippy-cov` in two ways:
 
   Then run:
 
-But it can also be used as `pytest` plugin:
   ```bash
-      skippy-cov --diff changes.diff --coverage-map-file .coverage
+      skippy-cov --diff changes.diff --coverage-file .coverage
   ```
 
-
-If you omit the `--diff` argument, it will default to the main branch as determined by your git remote (usually "main" or "master"):
+* **Option 1: Use a Git Branch or Ref**  
+  You can specify a branch or ref to diff against (e.g., the main branch):
 
   ```bash
-      skippy-cov --coverage-map-file .coverage
+      skippy-cov --diff main --coverage-file .coverage
+  ```
+
+  If you omit the `--diff` argument, it will default to the main branch as determined by your git remote (usually "main" or "master"):
+
+  ```bash
+      skippy-cov --coverage-file .coverage
   ```
 
 But it can also be used as a `pytest` plugin:
 
 ```bash
-    pytest --skippy-cov --skippy-cov-diff changes.diff --skippy-cov-coverage-map-file .coverage
+    pytest --skippy-cov --skippy-cov-diff changes.diff --skippy-cov-coverage-file .coverage
 ```
 
 which would be the equivalent of doing this:
 
 ```bash
-    pytest $(skippy-cov --diff changes.diff --coverage-map-file .coverage)
+    pytest $(skippy-cov --diff changes.diff --coverage-file .coverage)
 ```
 
 ## Configuration
@@ -70,13 +75,9 @@ which would be the equivalent of doing this:
   - If omitted, defaults to the main branch as determined by `git remote show origin`.
 
 Example usages:
-- `skippy-cov --diff changes.diff --coverage-map-file .coverage`
-- `skippy-cov --diff main --coverage-map-file .coverage`
-- `skippy-cov --coverage-map-file .coverage` (defaults to main branch)
-
-#### System Requirements
-
-For the diff argument to work, this requires a working `git` installation.
+- `skippy-cov --diff changes.diff --coverage-file .coverage`
+- `skippy-cov --diff main --coverage-file .coverage`
+- `skippy-cov --coverage-file .coverage` (defaults to main branch)
 
 ## Contributing
 

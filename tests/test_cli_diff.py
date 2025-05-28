@@ -35,7 +35,7 @@ def test_diff_file_mode(dummy_diff_file, dummy_coverage_file, capsys):
     argv = [
         "--diff",
         str(diff_file),
-        "--coverage-map-file",
+        "--coverage-file",
         str(cov_file.resolve()),
     ]
     try:
@@ -66,7 +66,7 @@ def test_diff_git_branch_mode(tmp_path, dummy_coverage_file, capsys):
     argv = [
         "--diff",
         "main",
-        "--coverage-map-file",
+        "--coverage-file",
         str(cov_file.resolve()),
     ]
     old_cwd = os.getcwd()
@@ -98,7 +98,7 @@ def test_diff_default_branch(tmp_path, dummy_coverage_file, capsys):
     subprocess.run(["git", "commit", "-m", "change"], cwd=repo, check=True)
     cov_file = dummy_coverage_file
     argv = [
-        "--coverage-map-file",
+        "--coverage-file",
         str(cov_file.resolve()),
     ]
     old_cwd = os.getcwd()

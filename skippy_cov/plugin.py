@@ -26,9 +26,9 @@ def pytest_addoption(parser):
         default=None,
     )
     group.addoption(
-        "--skippy-cov-coverage-map-file",
+        "--skippy-cov-coverage-file",
         required=False,
-        help="Path to the coverage map file (.coverage sqlite database).",
+        help="Path to the coverage file (.coverage sqlite database).",
         type=Path,
         default=Path(".coverage"),
     )
@@ -55,7 +55,7 @@ def pytest_configure(config):
     """
     skippy_cov = config.getoption("skippy_cov")
     diff_arg = config.getoption("skippy_cov_diff")
-    cov_map_file = config.getoption("skippy_cov_coverage_map_file")
+    cov_file = config.getoption("skippy_cov_coverage_file")
     keep_prefix = config.getoption("skippy_cov_keep_prefix")
     if not skippy_cov:
         return
@@ -70,7 +70,7 @@ def pytest_configure(config):
     relative_to = [Path(x) for x in config.args if x]
     selected_tests = run(
         diff_content,
-        cov_map_file,
+        cov_file,
         relative_to,
         keep_prefix,
     )

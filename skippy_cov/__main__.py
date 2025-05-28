@@ -107,9 +107,9 @@ def main(argv=None):
         default=None,
     )
     parser.add_argument(
-        "--coverage-map-file",
+        "--coverage-file",
         required=False,
-        help="Path to the coverage map file (.coverage sqlite database).",
+        help="Path to the coverage file (.coverage sqlite database).",
         type=Path,
         default=Path(".coverage"),
     )
@@ -148,7 +148,7 @@ def main(argv=None):
 
     run(
         diff_content,
-        args.coverage_map_file,
+        args.coverage_file,
         args.relative_to,
         args.keep_prefix,
         display=True,
