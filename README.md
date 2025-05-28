@@ -9,39 +9,74 @@
 
 To use this, you first need to generate the following required files:
 
-* **Generate a Diff File:** Create a diff file using Git.
-
-```bash
-    git diff > changes.diff
-```
-
 * **Run Coverage Analysis:** Generate a `.coverage` database using `coverage.py`.
 
 ```bash
     coverage run -m pytest
 ```
 
-Now, `skippy-cov` can be ran as a standalone script that will list the relevant tests.
+You can provide the diff to `skippy-cov` in two ways:
 
-```bash
-    skippy-cov --diff-file changes.diff --coverage-map-file .coverage
-```
+
+* **Option 1: Use a Git Branch or Ref**
+  You can specify a branch or ref to diff against (e.g., the main branch):
+
+  ```bash
+      skippy-cov --diff main --coverage-map-file .coverage
+  ```
+
+* **Option 2: Use a Diff File**
+  Generate a diff file using Git:
+
+  ```bash
+      git diff > changes.diff
+  ```
+
+  Then run:
 
 But it can also be used as `pytest` plugin:
+  ```bash
+      skippy-cov --diff changes.diff --coverage-map-file .coverage
+  ```
+
+
+If you omit the `--diff` argument, it will default to the main branch as determined by your git remote (usually "main" or "master"):
+
+  ```bash
+      skippy-cov --coverage-map-file .coverage
+  ```
+
+But it can also be used as a `pytest` plugin:
 
 ```bash
-    pytest --skippy-cov --skippy-cov-diff-file changes.diff --skippy-cov-coverage-map-file .coverage
+    pytest --skippy-cov --skippy-cov-diff changes.diff --skippy-cov-coverage-map-file .coverage
 ```
 
 which would be the equivalent of doing this:
 
 ```bash
-    pytest $(skippy-cov --diff-file changes.diff --coverage-map-file .coverage)
+    pytest $(skippy-cov --diff changes.diff --coverage-map-file .coverage)
 ```
 
 ## Configuration
 
 `skippy-cov` can be configured using command-line arguments. See `skippy-cov --help` for more information.
+
+### Diff Argument
+
+- `--diff`: Path to a diff file, or a git branch/ref to diff against.
+  - If the argument is a path to an existing file, its contents are used as the diff.
+  - Otherwise, it is passed to `git diff <arg>` and the output is used.
+  - If omitted, defaults to the main branch as determined by `git remote show origin`.
+
+Example usages:
+- `skippy-cov --diff changes.diff --coverage-map-file .coverage`
+- `skippy-cov --diff main --coverage-map-file .coverage`
+- `skippy-cov --coverage-map-file .coverage` (defaults to main branch)
+
+#### System Requirements
+
+For the diff argument to work, this requires a working `git` installation.
 
 ## Contributing
 
@@ -50,4 +85,3 @@ See `CONTRIBUTING.md` for information on how to contribute to the project.
 ## License
 
 See `LICENSE` for licensing information.
-
