@@ -40,7 +40,7 @@ def get_config() -> Generator[GetConfigFun, None, None]:
     config_handler._config = None  # reset borg
 
 
-def test_config_handler_presedence(get_config: GetConfigFun, mocker: MockFixture):
+def test_config_handler_precedence(get_config: GetConfigFun, mocker: MockFixture):
     """
     Test that .pytest.ini has the highest priority regardless of order
     """

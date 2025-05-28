@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import logging
+import subprocess
 import sys
 from pathlib import Path
 
@@ -13,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 def run(
-    diff_file: Path,
+    diff: str,
     coverage_file: Path,
     relative_to: list[Path] | None,
     keep_prefix: bool,
@@ -22,7 +23,7 @@ def run(
     """
     Run the test filter. If `display` = True will also print the output to stdout
     """
-    diff_handler = DiffHandler(diff_file.read_text())
+    diff_handler = DiffHandler(diff)
     coverage_map = CoverageMap(coverage_file)
     selected_tests = select_tests_to_run(diff_handler, coverage_map)
     tests = sorted(selected_tests)
@@ -48,16 +49,58 @@ def run(
     return output
 
 
-def main():
+def get_default_branch() -> str:
+    """
+    Determine the default branch to diff against.
+
+    This function attempts to determine the default branch by inspecting the
+    output of `git remote show origin`. If it fails to determine the branch
+    (e.g., not in a git repository, or `origin` is not configured), it falls
+    back to "main".
+
+    Returns:
+        str: The name of the default branch (e.g., "main", "develop").
+    """
+    try:
+        output = subprocess.check_output(
+            ["git", "remote", "show", "origin"], stderr=subprocess.DEVNULL, text=True
+        )
+        for line in output.splitlines():
+            if "HEAD branch" in line:
+                return line.split(":")[-1].strip()
+    except Exception:
+        logger.info("Could not determine default branch, falling back to 'main'.")
+    return "main"
+
+
+def get_diff_content(diff_arg):
+    # If it's a file path and exists, read it as a file
+    if diff_arg:  # Only try Path if diff_arg is not None/empty
+        path = Path(diff_arg)
+        if path.exists():
+            return path.read_text()
+    # Otherwise, treat as git diff argument (branch/refspec)
+    branch = diff_arg if diff_arg else get_default_branch()
+    try:
+        diff = subprocess.check_output(
+            ["git", "diff", branch], stderr=subprocess.DEVNULL, text=True
+        )
+    except Exception as e:
+        print(f"skippy-cov: failed to get git diff for '{branch}': {e}", file=sys.stderr)
+        sys.exit(1)
+    else:
+        return diff
+
+
+def main(argv=None):
     parser = argparse.ArgumentParser(
         description="Select pytest tests based on diff and coverage."
     )
     parser.add_argument(
-        "--diff-file",
+        "--diff",
         required=False,
-        help="Path to a file containing the git diff.",
-        type=Path,
-        default=Path("changes.diff"),
+        help="Path to a diff file or a git ref/branch to diff against (default: main branch).",
+        default=None,
     )
     parser.add_argument(
         "--coverage-map-file",
@@ -90,20 +133,17 @@ def main():
     parser.add_argument(
         "--debug", action="store_true", help="Enable debug logging.", default=False
     )
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     if args.debug:
         logging.basicConfig(level=logging.DEBUG)
 
-    if not args.diff_file.exists():
-        print(
-            f"skippy-cov: missing file `{args.diff_file.as_posix()}`. Unable to continue",
-            file=sys.stderr,
-        )
-        sys.exit(1)
+    diff_content = (
+        get_diff_content(args.diff) if args.diff is not None else get_diff_content(None)
+    )
 
     run(
-        args.diff_file,
+        diff_content,
         args.coverage_map_file,
         args.relative_to,
         args.keep_prefix,

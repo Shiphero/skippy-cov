@@ -20,7 +20,11 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
-dependencies = ["unidiff >=0.7.5", "coverage>=7.6", "tomli; python_version < '3.11'"]
+dependencies = [
+    "unidiff >=0.7.5",
+    "coverage>=7.6",
+    "tomli; python_version < '3.11'",
+]
 scripts = { "skippy-cov" = "skippy_cov.__main__:main" }
 
 [project.urls]
@@ -102,6 +106,8 @@ ignore = [
     "E501",
     # DoNotAssignLambda
     "E731",
+    "S607",
+    "S603",
 ]
 
 [tool.ruff.lint.per-file-ignores]
