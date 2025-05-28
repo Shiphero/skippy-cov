@@ -74,6 +74,10 @@ def get_default_branch() -> str:
 
 
 def get_diff_content(diff_arg):
+    """
+    Get the diff content based on the provided argument.
+    It can either be a file path or a git ref/branch to diff against.
+    """
     # If it's a file path and exists, read it as a file
     if diff_arg:  # Only try Path if diff_arg is not None/empty
         path = Path(diff_arg)
