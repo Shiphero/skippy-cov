@@ -30,3 +30,13 @@ def test_load_coverage_map(mocked_coverage: MagicMock) -> None:
             "test.py::test2",
         },
     )
+
+
+def test_load_coverage_map_nested_folder(mocked_coverage: MagicMock) -> None:
+    """
+    Ensure the path is correctly parsed to the coverage db
+    """
+    coverage_map = CoverageMap(Path("coverage.db"))
+    candidate = coverage_map.get_tests(Path("tests/test.py"))
+    coverage_map.db.contexts_by_lineno.assert_called_with("tests/test.py")
+    assert candidate and candidate.path == Path("tests/test.py")
