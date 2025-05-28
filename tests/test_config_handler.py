@@ -36,6 +36,7 @@ GetConfigFun = Callable[[], config_handler.ConfigHandler]
 
 @pytest.fixture
 def get_config() -> Generator[GetConfigFun, None, None]:
+    config_handler._config = None  # reset borg
     yield lambda: config_handler.get_config()
     config_handler._config = None  # reset borg
 
