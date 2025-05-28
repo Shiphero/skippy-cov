@@ -6,7 +6,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from skippy_cov import select_tests_to_run
+from skippy_cov import select_tests_to_run, __version__
 from skippy_cov.diff_handler import DiffHandler
 from skippy_cov.utils import CoverageMap, filter_by_path
 
@@ -95,7 +95,6 @@ def get_diff_content(diff_arg):
     else:
         return diff
 
-
 def main(argv=None):
     parser = argparse.ArgumentParser(
         description="Select pytest tests based on diff and coverage."
@@ -136,6 +135,9 @@ def main(argv=None):
     )
     parser.add_argument(
         "--debug", action="store_true", help="Enable debug logging.", default=False
+    )
+    parser.add_argument(
+        "--version", action="version", version=f"%(prog)s {__version__}"
     )
     args = parser.parse_args(argv)
 

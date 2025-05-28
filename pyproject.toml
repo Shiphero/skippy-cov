@@ -1,6 +1,5 @@
 [project]
 name = "skippy-cov"
-version = "0.1.5"
 description = "Selectively run tests based on the current git diff and the collected data from previous tests runs"
 authors = [
     { name = "Mariano Garcia Berrotaran", email = "mariano.garciaberrotaran@shiphero.com" },
@@ -27,6 +26,7 @@ dependencies = [
     "tomli; python_version < '3.11'",
 ]
 scripts = { "skippy-cov" = "skippy_cov.__main__:main" }
+dynamic = ["version"]
 
 [project.urls]
 Repository = "https://github.com/shiphero/skippy-cov"
@@ -44,8 +44,8 @@ dev = [
 ]
 
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["flit_core >=3.6,<4"]
+build-backend = "flit_core.buildapi"
 
 [tool.setuptools]
 py-modules = ["skippy_cov"]
