@@ -73,7 +73,7 @@ def get_default_branch() -> str:
     return "main"
 
 
-def get_diff_content(diff_arg):
+def get_diff_content(diff_arg: str | None = None) -> str:
     """
     Get the diff content based on the provided argument.
     It can either be a file path or a git ref/branch to diff against.
@@ -84,13 +84,13 @@ def get_diff_content(diff_arg):
         if path.exists():
             return path.read_text()
     # Otherwise, treat as git diff argument (branch/refspec)
-    branch = diff_arg if diff_arg else get_default_branch()
+    diff_ref = diff_arg if diff_arg else get_default_branch()
     try:
         diff = subprocess.check_output(
-            ["git", "diff", branch], stderr=subprocess.DEVNULL, text=True
+            ["git", "diff", diff_ref], stderr=subprocess.DEVNULL, text=True
         )
     except Exception as e:
-        print(f"skippy-cov: failed to get git diff for '{branch}': {e}", file=sys.stderr)
+        print(f"skippy-cov: failed to get git diff for '{diff_ref}': {e}", file=sys.stderr)
         sys.exit(1)
     else:
         return diff
