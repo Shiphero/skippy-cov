@@ -44,7 +44,7 @@ def test_diff_file_mode(dummy_diff_file, dummy_coverage_file, capsys):
     except SystemExit as e:
         code = e.code if isinstance(e.code, int) else 1
     out = capsys.readouterr()
-    assert code == 0
+    assert code == 0, out
     assert "skippy-cov:" not in out.err
 
 
@@ -72,6 +72,10 @@ def test_diff_git_branch_mode(tmp_path, dummy_coverage_file, capsys):
     old_cwd = os.getcwd()
     try:
         os.chdir(repo)
+        # Get the actual diff using triple-dot
+        actual_diff = subprocess.check_output(["git", "diff", "main...HEAD"], text=True)
+        assert "-    return 1" in actual_diff
+        assert "+    return 2" in actual_diff
         try:
             main(argv)
             code = 0
@@ -112,5 +116,5 @@ def test_diff_default_branch(tmp_path, dummy_coverage_file, capsys):
     finally:
         os.chdir(old_cwd)
     out = capsys.readouterr()
-    assert code == 0
+    assert code == 0, out
     assert "skippy-cov:" not in out.err
