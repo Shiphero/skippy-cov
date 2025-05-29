@@ -84,7 +84,7 @@ def get_diff_content(diff_arg: str | None = None) -> str:
         if path.exists():
             return path.read_text()
     # Otherwise, treat as git diff argument (branch/refspec)
-    diff_ref = diff_arg if diff_arg else get_default_branch()
+    diff_ref = diff_arg if diff_arg else f"{get_default_branch()}...HEAD"
     try:
         diff = subprocess.check_output(
             ["git", "diff", diff_ref], stderr=subprocess.DEVNULL, text=True
