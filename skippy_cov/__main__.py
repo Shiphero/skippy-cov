@@ -90,7 +90,9 @@ def get_diff_content(diff_arg: str | None = None) -> str:
             ["git", "diff", diff_ref], stderr=subprocess.DEVNULL, text=True
         )
     except Exception as e:
-        print(f"skippy-cov: failed to get git diff for '{diff_ref}': {e}", file=sys.stderr)
+        print(
+            f"skippy-cov: failed to get git diff for '{diff_ref}': {e}", file=sys.stderr
+        )
         sys.exit(1)
     else:
         return diff
