@@ -9,75 +9,59 @@
 
 To use this, you first need to generate the following required files:
 
-* **Run Coverage Analysis:** Generate a `.coverage` database using `coverage.py`.
+* **Run Coverage Analysis:** Generate a `.coverage` database using `coverage.py` via `pytest-cov` with [test contexts](https://pytest-cov.readthedocs.io/en/latest/contexts.html)
 
 ```bash
-    coverage run -m pytest
+    pytest --cov=myproj --cov-context=test myproj/tests/
 ```
 
-You can provide the diff to `skippy-cov` in two ways:
+Then change your code and run
 
-
-* **Option 1: Use a Git Branch or Ref**
-  You can specify a branch or ref to diff against (e.g., the main branch):
-
-  ```bash
-      skippy-cov --diff main --coverage-file .coverage
-  ```
-
-* **Option 2: Use a Diff File**
-  Generate a diff file using Git:
-
-  ```bash
-      git diff > changes.diff
-  ```
-
-  Then run:
-
-  ```bash
-      skippy-cov --diff changes.diff --coverage-file .coverage
-  ```
-
-* **Option 1: Use a Git Branch or Ref**  
-  You can specify a branch or ref to diff against (e.g., the main branch):
-
-  ```bash
-      skippy-cov --diff main --coverage-file .coverage
-  ```
-
-  If you omit the `--diff` argument, it will default to the main branch as determined by your git remote (usually "main" or "master"):
-
-  ```bash
-      skippy-cov --coverage-file .coverage
-  ```
-
-But it can also be used as a `pytest` plugin:
-
-```bash
-    pytest --skippy-cov --skippy-cov-diff changes.diff --skippy-cov-coverage-file .coverage
+```
+pytest --skippy-cov
 ```
 
-which would be the equivalent of doing this:
+In this case, `skippy-cov` will analyze the changes and run only the tests that are relevant to the modified code.
 
-```bash
-    pytest $(skippy-cov --diff changes.diff --coverage-file .coverage)
+You can also use `skippy-cov` as a CLI on its own.
+
 ```
+skippy-cov
+```
+
+that will list the tests selected.
+
 
 ## Configuration
 
-`skippy-cov` can be configured using command-line arguments. See `skippy-cov --help` for more information.
+The inputs for skippy-cov are the coverage file (default: `.coverage`) and the diff information. By default, the diff is generated in the same way as a pull request (PR) on GitHub: only the changes introduced by your branch compared to the target branch are considered. This is done using the `git diff <target>...HEAD` (triple-dot) syntax.
 
-### Diff Argument
+You can specify the coverage file and a branch or ref to diff against (e.g., the main branch):
 
-- `--diff`: Path to a diff file, or a git branch/ref to diff against.
-  - If the argument is a path to an existing file, its contents are used as the diff.
-  - Otherwise, it is passed to `git diff <arg>` and the output is used.
-  - If omitted, defaults to the main branch as determined by `git remote show origin`.
+```bash
+skippy-cov --diff main --coverage-file .coverage
+```
 
-Example usages:
-- `skippy-cov --diff changes.diff --coverage-file .coverage`
-- `skippy-cov --diff main --coverage-file .coverage`
-- `skippy-cov --coverage-file .coverage` (defaults to main branch)
+or equivalently
+
+```bash
+pytest --skippy-cov --skippy-cov-diff main --skippy-cov-coverage-file .coverage
+```
+
+You can also provide a diff file:
+
+```bash
+git diff > changes.diff
+skippy-cov --diff changes.diff --coverage-file .coverage
+```
+
+If you omit the `--diff` argument, it will default to the main branch as determined by your `git remote` (usually "main" or "master").
+
+**Advanced:**  
+You may pass any valid git diff refspec to `--diff`, including triple-dot syntax (e.g., `main...HEAD` or `origin/master...feature-branch`). If you provide a triple-dot ref, it will be used as-is, giving you full control over the comparison range.
+
+See `skippy-cov --help` for more information.
+
 
 ## Contributing
 
