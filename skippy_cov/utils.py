@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import defaultdict
 from dataclasses import dataclass
 from fnmatch import fnmatch
 from pathlib import Path
@@ -63,12 +64,21 @@ def is_test_file(file_path: Path) -> bool:
     return fnmatch(file_path.name, DEFAULT_GLOB_PATTERN)
 
 
-def _fix_test_name(test_name: str) -> str:
+def _fix_test_name(test_name: str) -> tuple[str, str]:
     """
-    Removes everything after the last `|` from the test name.
-    Most likely, this is the phase name and not part of the test name or parameters.
+    Removes everything after the last `|` from the test name and the first `::`
+    In a file like `file.py::test_name|phase_name` the `|` separates the phase name
+        and the first `::` separates the test name from the file_name
+    This is because the context in coverage is always a string like `file_name.py::test_name`
+        or `file_name.py::class_name::test_name`
+
+    >>> _fix_test_name("file.py::test_name|phase_name")
+    ('file.py', 'test_name')
+    >>> _fix_test_name("file.py::class_name::test_name")
+    ('file.py', 'class_name::test_name')
     """
-    return test_name.rsplit("|", 1)[0]
+    rhs, lhs = test_name.rsplit("|", 1)[0].split("::", 1)
+    return (rhs, lhs)
 
 
 def filter_by_path(
@@ -115,10 +125,14 @@ class CoverageMap:
         self.db = coverage.CoverageData(filepath.name)
         self.db.read()
 
-    def get_tests(self, filepath: Path) -> FileTestCandidate | None:
-        tests = set()
+    def get_tests(self, filepath: Path) -> list[FileTestCandidate]:
+        found_tests: defaultdict[Path, set[str]] = defaultdict(set)
         for line_tests in self.db.contexts_by_lineno(filepath.as_posix()).values():
-            tests |= {_fix_test_name(test) for test in line_tests}
-        if tests:
-            return FileTestCandidate(path=filepath, tests=tests)
-        return None
+            for test in line_tests:
+                if test:
+                    src, test = _fix_test_name(test)
+                    found_tests[Path(src)].add(test)
+        return [
+            FileTestCandidate(path=filepath, tests=tests)
+            for (filepath, tests) in found_tests.items()
+        ]
