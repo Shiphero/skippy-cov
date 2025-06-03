@@ -31,19 +31,19 @@ def test_config_is_test_file(mocker: MockFixture) -> None:
 @pytest.mark.parametrize(
     "name,expected",
     [
-        ("test_file.py::test_name", "test_file.py::test_name"),
-        ("test_file.py::ClassName::test_name", "test_file.py::ClassName::test_name"),
+        ("test_file.py::test_name", ("test_file.py", "test_name")),
+        ("test_file.py::ClassName::test_name", ("test_file.py", "ClassName::test_name")),
         (
             "test_file.py::test_name[param1, param2]",
-            "test_file.py::test_name[param1, param2]",
+            ("test_file.py", "test_name[param1, param2]"),
         ),
         (
             "test_file.py::test_name[param1, param2]|phase",
-            "test_file.py::test_name[param1, param2]",
+            ("test_file.py", "test_name[param1, param2]"),
         ),
         (
             "test_file.py::test_name[param|param]|phase",
-            "test_file.py::test_name[param|param]",
+            ("test_file.py", "test_name[param|param]"),
         ),
     ],
 )

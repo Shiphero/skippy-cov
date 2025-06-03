@@ -85,12 +85,13 @@ def select_tests_to_run(
 
     for file_path in diff_handler.changed_files:
         # 1. If the changed file is a source file with known coverage
-        if candidate := coverage_map.get_tests(file_path):
-            logger.debug(
-                f"Source file '{candidate.path}' changed. Adding {len(candidate.tests)}"
-                "related test(s) from coverage map.",
-            )
-            tests_to_run.append(candidate)
+        if candidates := coverage_map.get_tests(file_path):
+            for candidate in candidates:
+                logger.debug(
+                    f"Source file '{candidate.path}' changed. Adding {len(candidate.tests)}"
+                    " related test(s) from coverage map.",
+                )
+                tests_to_run.append(candidate)
 
         # 2. If the changed file is a test file itself
         # Use the discovery function, which internally checks if it's a test file

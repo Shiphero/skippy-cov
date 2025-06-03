@@ -14,7 +14,7 @@ def mocked_coverage(mocker: MockerFixture) -> MagicMock:
     mock = mocker.patch("skippy_cov.utils.coverage.CoverageData")
     coverage_db: MagicMock = mock.return_value
     coverage_db.read.return_value = True
-    coverage_db._file_map.keys.return_value = ["test.py"]
+    coverage_db._file_map.keys.return_value = ["source.py"]
     coverage_db.contexts_by_lineno.return_value = {
         1: ["test.py::test1|run", "test.py::test2|run"],
     }
@@ -23,13 +23,15 @@ def mocked_coverage(mocker: MockerFixture) -> MagicMock:
 
 def test_load_coverage_map(mocked_coverage: MagicMock) -> None:
     coverage_map = CoverageMap(Path("coverage.db"))
-    assert coverage_map.get_tests(Path("test.py")) == FileTestCandidate(
-        path=Path("test.py"),
-        tests={
-            "test.py::test1",
-            "test.py::test2",
-        },
-    )
+    assert coverage_map.get_tests(Path("source.py")) == [
+        FileTestCandidate(
+            path=Path("test.py"),
+            tests={
+                "test1",
+                "test2",
+            },
+        )
+    ]
 
 
 def test_load_coverage_map_nested_folder(mocked_coverage: MagicMock) -> None:
@@ -37,6 +39,6 @@ def test_load_coverage_map_nested_folder(mocked_coverage: MagicMock) -> None:
     Ensure the path is correctly parsed to the coverage db
     """
     coverage_map = CoverageMap(Path("coverage.db"))
-    candidate = coverage_map.get_tests(Path("tests/test.py"))
-    mocked_coverage.contexts_by_lineno.assert_called_with("tests/test.py")
-    assert candidate and candidate.path == Path("tests/test.py")
+    candidates = coverage_map.get_tests(Path("src/source.py"))
+    mocked_coverage.contexts_by_lineno.assert_called_with("src/source.py")
+    assert candidates and candidates[0].path == Path("test.py")
