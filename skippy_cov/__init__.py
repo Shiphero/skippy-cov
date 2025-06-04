@@ -10,7 +10,7 @@ from skippy_cov.utils import CoverageMap, FileTestCandidate, is_test_file
 
 logger = logging.getLogger(__name__)
 
-__version__ = "0.2.1"
+__version__ = "0.2.2"
 
 
 def discover_tests_in_file(file_path: Path) -> FileTestCandidate | None:
