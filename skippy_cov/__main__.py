@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import argparse
+import json
 import logging
 import subprocess
 import sys
+from enum import Enum
 from pathlib import Path
 
 from skippy_cov import __version__, select_tests_to_run
@@ -13,11 +15,30 @@ from skippy_cov.utils import CoverageMap, filter_by_path
 logger = logging.getLogger(__name__)
 
 
+class Format(Enum):
+    pytest = "pytest"
+    json = "json"
+    lines = "lines"
+
+    @classmethod
+    def argtype(cls, s: str) -> Enum:
+        try:
+            return cls[s]
+        except KeyError as e:
+            raise argparse.ArgumentTypeError(  # noqa: TRY003
+                f"{s!r} is not a valid format"
+            ) from e
+
+    def __str__(self):
+        return self.value
+
+
 def run(
     diff: str,
     coverage_file: Path,
     relative_to: list[Path] | None,
     keep_prefix: bool,
+    fmt: Format = Format.pytest,
     display: bool = False,
 ) -> set[str]:
     """
@@ -43,9 +64,17 @@ def run(
     for test in selected_tests:
         output |= test.as_set()
 
-    output_content = " ".join(output)
     if display:
-        print(output_content)
+        if fmt == Format.pytest:
+            print(" ".join(output))
+        elif fmt == Format.lines:
+            print("\n".join(output))
+        elif fmt == Format.json:
+            obj = {}
+            for test in selected_tests:
+                obj[test.path.as_posix()] = list(test.tests)
+            print(json.dumps(obj))
+
     return output
 
 
@@ -140,6 +169,14 @@ def main(argv=None):
         "--debug", action="store_true", help="Enable debug logging.", default=False
     )
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
+    parser.add_argument(
+        "--format",
+        required=False,
+        help="Output format",
+        type=Format.argtype,
+        default=Format.pytest,
+        choices=Format,
+    )
     args = parser.parse_args(argv)
 
     if args.debug:
@@ -154,5 +191,6 @@ def main(argv=None):
         args.coverage_file,
         args.relative_to,
         args.keep_prefix,
+        args.format,
         display=True,
     )
